@@ -1,9 +1,8 @@
-import { PubSub } from '@google-cloud/pubsub'
+import { pubsub } from '../config/pubsub'
 import { addMessage, type Message, type MessageCategory } from '../data/data'
 
 const TOPIC_SERVICE = 'GOLMON_service'
 
-const pubsub = new PubSub()
 const topic = pubsub.topic(TOPIC_SERVICE)
 
 export async function publishMessage(

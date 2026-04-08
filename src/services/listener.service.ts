@@ -1,5 +1,6 @@
-import { PubSub, type Subscription } from '@google-cloud/pubsub'
+import type { Subscription } from '@google-cloud/pubsub'
 import type { Message as PubSubMessage } from '@google-cloud/pubsub'
+import { pubsub } from '../config/pubsub'
 import { addMessage, type Message } from '../data/data'
 
 const USER_NAME = import.meta.env.VITE_USER_NAME
@@ -9,8 +10,6 @@ const TOPIC_COMMON = 'GOLMON_common'
 
 const SUB_USER = `GOLMON_sub_${USER_NAME}`
 const SUB_COMMON = `GOLMON_sub_common_${USER_NAME}`
-
-const pubsub = new PubSub()
 
 async function ensureSubscription(topicName: string, subName: string): Promise<Subscription> {
   try {

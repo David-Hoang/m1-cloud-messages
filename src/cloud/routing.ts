@@ -1,7 +1,5 @@
-import { PubSub } from '@google-cloud/pubsub'
+import { pubsub } from '../config/pubsub'
 import type { Message } from '../data/data'
-
-const pubsub = new PubSub()
 
 /**
  * Interface du message Pub/Sub reçu par la Cloud Function.
@@ -33,7 +31,12 @@ function resolveTargetTopic(target: string): string {
  *   gcloud functions deploy routeMessage \
  *     --runtime nodejs22 \
  *     --trigger-topic GOLMON_service \
- *     --entry-point routeMessage
+ *     --entry-point routeMessage \
+ *     --service-account="${SA_NAME}@${PROJECT_ID}.iam.gserviceaccount.com"
+ *
+ * C'est ce flag --service-account qui attache l'identité GCP à la fonction.
+ * Sur GCP, new PubSub() sans keyFilename utilise automatiquement ce compte
+ * via l'ADC (Application Default Credentials) du metadata server.
  */
 export async function routeMessage(pubsubMessage: PubSubPayload): Promise<void> {
   const raw = Buffer.from(pubsubMessage.data, 'base64').toString('utf-8')
