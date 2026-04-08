@@ -40,7 +40,7 @@
 
 <script lang="ts">
 export default {
-  name: 'MessageInput',
+  name: 'MessagesInput',
 
   props: {
     availableUsers: {
