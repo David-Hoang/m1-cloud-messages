@@ -38,37 +38,25 @@
   </div>
 </template>
 
-<script lang="ts">
-export default {
-  name: 'MessagesInput',
+<script setup lang="ts">
+import { ref } from 'vue'
 
-  props: {
-    availableUsers: {
-      type: Array as () => string[],
-      default: () => [],
-    },
-    defaultTopic: {
-      type: String,
-      default: 'COMMON',
-    },
-	},
+const props = defineProps<{
+  availableUsers?: string[]
+  defaultTopic?: string
+}>()
 
-  emits: ['send'],
+const emit = defineEmits<{
+  send: [{ target: string; payload: string }]
+}>()
 
-  data() {
-    return {
-      inputText: '',
-      selectedTopic: this.defaultTopic,
-    }
-  },
+const inputText = ref('')
+const selectedTopic = ref(props.defaultTopic ?? 'COMMON')
 
-  methods: {
-    handleSend() {
-      const text = this.inputText.trim()
-      if (!text) return
-      this.$emit('send', { target: this.selectedTopic, payload: text })
-      this.inputText = ''
-    },
-  },
+const handleSend = () => {
+  const text = inputText.value.trim()
+  if (!text) return
+  emit('send', { target: selectedTopic.value, payload: text })
+  inputText.value = ''
 }
 </script>

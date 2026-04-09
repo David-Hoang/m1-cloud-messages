@@ -27,24 +27,18 @@
   </div>
 </template>
 
-<script lang="ts">
-export default {
-  name: 'MessageBubble',
+<script setup lang="ts">
+import { computed } from 'vue'
+import type { Message } from '../../types/MessageType'
 
-  props: {
-    message: {
-      type: Object,
-      required: true,
-    },
-  },
+const props = defineProps<{
+  message: Message
+}>()
 
-  computed: {
-    formattedTime() {
-      return new Date(this.message.timestamp).toLocaleTimeString('fr-FR', {
-        hour: '2-digit',
-        minute: '2-digit',
-      })
-    },
-  },
-}
+const formattedTime = computed(() =>
+  new Date(props.message.timestamp).toLocaleTimeString('fr-FR', {
+    hour: '2-digit',
+    minute: '2-digit',
+  })
+)
 </script>
