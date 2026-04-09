@@ -1,3 +1,6 @@
+# GCP credentials
+key-*.json
+
 # Logs
 logs
 *.log
