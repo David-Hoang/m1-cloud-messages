@@ -1,5 +1,25 @@
-import { pubsub } from '../config/pubsub'
-import type { Message } from '../data/data'
+import { PubSub } from '@google-cloud/pubsub'
+
+const pubsub = new PubSub()
+
+const TOPIC_COMMON = 'GOLMON_common'
+
+const USER_TOPICS: Record<string, string> = {
+  quentin: 'GOLMON_quentin',
+  sami: 'GOLMON_sami',
+  titi: 'GOLMON_thibault',
+  dadibe: 'GOLMON_david',
+}
+
+type MessageCategory = 'OPEN' | 'CLOSE' | 'EMISSION' | 'ROUTAGE'
+
+interface Message {
+  CATEGORY: MessageCategory
+  TARGET: string
+  SOURCE: string
+  TIMESTAMP: string
+  PAYLOAD: string
+}
 
 /**
  * Interface du message Pub/Sub reçu par la Cloud Function.
@@ -14,14 +34,15 @@ interface PubSubPayload {
 
 /**
  * Détermine le topic de destination à partir du champ TARGET.
- * - 'COMMON' → topic commun GOLMON_common
- * - autre   → TARGET est directement le nom du topic destinataire
+ * - 'COMMON'   → GOLMON_common
+ * - clé connue → topic utilisateur correspondant (ex: 'quentin' → 'GOLMON_quentin')
+ * - autre      → TARGET utilisé tel quel
  */
 function resolveTargetTopic(target: string): string {
   if (target === 'COMMON') {
-    return 'GOLMON_common'
+    return TOPIC_COMMON
   }
-  return target
+  return USER_TOPICS[target] ?? target
 }
 
 /**
@@ -34,8 +55,7 @@ function resolveTargetTopic(target: string): string {
  *     --entry-point routeMessage \
  *     --service-account="${SA_NAME}@${PROJECT_ID}.iam.gserviceaccount.com"
  *
- * C'est ce flag --service-account qui attache l'identité GCP à la fonction.
- * Sur GCP, new PubSub() sans keyFilename utilise automatiquement ce compte
+ * Sur GCP, new PubSub() sans argument utilise automatiquement le compte de service
  * via l'ADC (Application Default Credentials) du metadata server.
  */
 export async function routeMessage(pubsubMessage: PubSubPayload): Promise<void> {

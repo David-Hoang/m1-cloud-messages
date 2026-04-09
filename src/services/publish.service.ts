@@ -1,7 +1,5 @@
 import { pubsub } from '../config/pubsub'
-import { addMessage, type Message, type MessageCategory } from '../data/data'
-
-const TOPIC_SERVICE = 'GOLMON_service'
+import { addMessage, TOPIC_SERVICE, type Message, type MessageCategory } from '../data/data'
 
 const topic = pubsub.topic(TOPIC_SERVICE)
 
