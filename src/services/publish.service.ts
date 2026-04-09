@@ -1,5 +1,5 @@
 import { pubsub } from '../config/pubsub'
-import { addMessage, TOPIC_SERVICE, type Message, type MessageCategory } from '../data/data'
+import { TOPIC_SERVICE, type Message, type MessageCategory } from '../data/data'
 
 const topic = pubsub.topic(TOPIC_SERVICE)
 
@@ -20,7 +20,6 @@ export async function publishMessage(
   const data = Buffer.from(JSON.stringify(message))
   await topic.publishMessage({ data })
 
-  addMessage(message)
   console.log(`[${category}] → ${target} : ${payload}`)
 }
 

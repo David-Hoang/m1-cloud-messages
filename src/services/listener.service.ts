@@ -1,7 +1,7 @@
 import type { Subscription } from '@google-cloud/pubsub'
 import type { Message as PubSubMessage } from '@google-cloud/pubsub'
 import { pubsub } from '../config/pubsub'
-import { addMessage, TOPIC_COMMON, type Message } from '../data/data'
+import { TOPIC_COMMON, type Message } from '../data/data'
 
 
 async function ensureSubscription(topicName: string, subName: string): Promise<Subscription> {
@@ -23,7 +23,6 @@ function makeMessageHandler(onMessage?: (msg: Message) => void) {
   return function handleMessage(message: PubSubMessage): void {
     try {
       const parsed: Message = JSON.parse(message.data.toString()) as Message
-      addMessage(parsed)
       onMessage?.(parsed)
       console.log(`[${parsed.CATEGORY}] ${parsed.SOURCE} → ${parsed.TARGET} : ${parsed.PAYLOAD}`)
     } catch (err) {
