@@ -11,7 +11,7 @@ const USER_TOPICS = {
   dadibe: 'GOLMON_david',
 }
 
-async function routeMessage(pubsubMessage) {
+async function golmonRouting(pubsubMessage) {
   function resolveTargetTopic(target) {
     if (target === 'COMMON') {
       return TOPIC_COMMON
@@ -41,3 +41,5 @@ async function routeMessage(pubsubMessage) {
 
   console.log(`[ROUTAGE] ${incoming.SOURCE} → ${targetTopic} (${incoming.CATEGORY})`)
 }
+
+exports.golmonRouting = golmonRouting
