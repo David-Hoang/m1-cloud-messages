@@ -40,7 +40,7 @@ const isCommon = computed(() => props.message.target === 'COMMON')
 
 const messageDirection = computed(() => {
   if (isCommon.value) {
-    return 'COMMON'
+    return props.message.source
   }
 
   if (props.message.isSent) {

@@ -8,7 +8,7 @@ const USER_TOPICS = {
   quentin: 'GOLMON_quentin',
   sami: 'GOLMON_sami',
   titi: 'GOLMON_thibault',
-  dadibe: 'GOLMON_david',
+  david: 'GOLMON_david',
 }
 
 async function golmonRouting(pubsubMessage) {
