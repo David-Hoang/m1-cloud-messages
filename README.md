@@ -1,48 +1,79 @@
-# app-cloud-messages
+# Cloud Messages
 
-This template should help get you started developing with Vue 3 in Vite.
+Ce dépôt est une application web qui utilise le Cloud pour simuler un système de messagerie instantanée 
 
-## Recommended IDE Setup
+<img width="533" height="420" alt="image" src="https://github.com/user-attachments/assets/6dce7c32-a9e9-4bf7-91ac-b9eaaea3424d" />
 
-[VS Code](https://code.visualstudio.com/) + [Vue (Official)](https://marketplace.visualstudio.com/items?itemName=Vue.volar) (and disable Vetur).
 
-## Recommended Browser Setup
+## Table des Matières
+1. [Fonctionnalités](#fonctionnalités)
+2. [Installation](#installation)
+3. [Structure du Projet](#structure-du-projet)
+4. [Technologies](#technologies)
+5. [Auteurs](#auteurs)
 
-- Chromium-based browsers (Chrome, Edge, Brave, etc.):
-  - [Vue.js devtools](https://chromewebstore.google.com/detail/vuejs-devtools/nhdogjmejiglipccpnnnanhbledajbpd)
-  - [Turn on Custom Object Formatter in Chrome DevTools](http://bit.ly/object-formatters)
-- Firefox:
-  - [Vue.js devtools](https://addons.mozilla.org/en-US/firefox/addon/vue-js-devtools/)
-  - [Turn on Custom Object Formatter in Firefox DevTools](https://fxdx.dev/firefox-devtools-custom-object-formatters/)
 
-## Type Support for `.vue` Imports in TS
+## Fonctionnalités
 
-TypeScript cannot handle type information for `.vue` imports by default, so we replace the `tsc` CLI with `vue-tsc` for type checking. In editors, we need [Volar](https://marketplace.visualstudio.com/items?itemName=Vue.volar) to make the TypeScript language service aware of `.vue` types.
+- **Authentification** : un utilisateur peut s'inscrire, se connecter, de déconnecter, modifier son compte...
+- **Achat de produits** : un client peut ajouter un produit au panier, passer commande avec Stripe
+- **Panel administrateur** : un administrateur peut voir les différentes statistiques de ventes, modifier les interfaces, ajouter un produit...
+- Il y a toute une panoplie de fonctionnalités intéressantes dans le projet
+  
 
-## Customize configuration
+## Installation
 
-See [Vite Configuration Reference](https://vite.dev/config/).
+### Lancer le serveur Backend
+1. Vérifier que mySQL est installé
+2. Accéder au dossier Backend
+   ```bash
+   cd .\Backend\
+   ```
+3. Installer les packages nécessaires au bon fonctionnement du projet
+   ```bash
+   npm i
+   ```
+4. Initialiser la base de données
+   ```bash
+   npx prisma db push
+   ```
+5. Lancer le serveur
+   ```bash
+   npx tsx src/server.ts
+   ```
 
-## Project Setup
+### Lancer le serveur Frontend
+1. Accéder au dossier Frontend
+   ```bash
+   cd .\Frontend\ticasaFront\
+   ```
+2. Installer les packages nécessaires au bon fonctionnement du projet
+   ```bash
+   npm i
+   ```
+3. Lancer le serveur Expo
+   ```bash
+   npx expo start
+   ```
 
-```sh
-npm install
-```
+### Accéder au site et à l'application
+- ***Pour la version web*** : "http://localhost:8081"
+- ***Pour la version Android*** : télécharger un émulateur Android, le démarrer et taper "a" dans le terminal d'Expo
 
-### Compile and Hot-Reload for Development
 
-```sh
-npm run dev
-```
+## Structure du Projet
 
-### Type-Check, Compile and Minify for Production
+- **backend** : Notre application backend avec l'API avec une architecture n-tiers
+- **frontend** : Notre partie front avec une architecture modulaire
 
-```sh
-npm run build
-```
 
-### Lint with [ESLint](https://eslint.org/)
+## Technologies
 
-```sh
-npm run lint
-```
+- **React Native** : Partie Frontend de notre application mobile Android/iOS
+- **React Native Web (Expo)** : Partie Frontend de notre site web
+- **Node.js (Express)** : Partie Backend de notre projet
+- **Prisma** : Relais base de données
+
+
+## Auteurs
+Développé par Samp83 (Sami PARIS), CassC17 (Cassandra CINNA) et Titinite (Thibault LERAY) en période de cours. Retrouvez plus de détails dans le dépôt [GitHub](https://github.com/CassC17/TICASA_Cyna_web).
