@@ -49,7 +49,7 @@ import type { Message } from './types/MessageType'
 const SERVER = 'http://localhost:3000'
 const WS_URL = 'ws://localhost:3000'
 
-const ALL_USERS = ['TOTO', 'ALICE', 'BOB', 'CHARLIE']
+const ALL_USERS = ['dabide', 'titi', 'sami', 'quentin']
 
 const step = ref(1)
 const currentUser = ref('')
