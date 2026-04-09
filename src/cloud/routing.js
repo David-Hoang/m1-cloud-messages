@@ -31,10 +31,7 @@ async function golmonRouting(pubsubMessage) {
 
   const targetTopic = resolveTargetTopic(incoming.TARGET)
 
-  const routed = {
-    ...incoming,
-    CATEGORY: 'ROUTAGE',
-  }
+  const routed = { ...incoming }
 
   const data = Buffer.from(JSON.stringify(routed))
   await pubsub.topic(targetTopic).publishMessage({ data })

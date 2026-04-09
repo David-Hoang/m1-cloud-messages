@@ -46,37 +46,66 @@ import MessageList from './components/Messages/MessagesList.vue'
 import MessageInput from './components/Messages/MessagesInput.vue'
 import type { Message } from './types/MessageType'
 
+const SERVER = 'http://localhost:3000'
+const WS_URL = 'ws://localhost:3000'
+
 const ALL_USERS = ['TOTO', 'ALICE', 'BOB', 'CHARLIE']
 
 const step = ref(1)
 const currentUser = ref('')
 const nextId = ref(1)
-
 const messages = ref<Message[]>([])
-
 const otherUsers = computed(() => ALL_USERS.filter(u => u !== currentUser.value))
 
-const handleProfileConfirm = (): void => {
-  messages.value.push({
-    id: nextId.value++,
-    source: currentUser.value,
-    target: 'COMMON',
-    category: 'OPEN',
-    payload: `${currentUser.value} vient de rejoindre le chat.`,
-    timestamp: new Date().toISOString(),
-    isSent: false,
-  })
+let ws: WebSocket | null = null
 
-  step.value = 2
+function connectWebSocket() {
+  ws = new WebSocket(WS_URL)
+
+  ws.onmessage = (event) => {
+    const msg = JSON.parse(event.data as string)
+    // Ignorer nos propres messages déjà ajoutés localement
+    if (msg.SOURCE === currentUser.value) return
+    messages.value.push({
+      id: nextId.value++,
+      source: msg.SOURCE,
+      target: msg.TARGET,
+      category: msg.CATEGORY,
+      payload: msg.PAYLOAD,
+      timestamp: msg.TIMESTAMP,
+      isSent: false,
+    })
+  }
+
+  ws.onerror = (err) => console.error('WebSocket error:', err)
 }
 
-const handleLeave = () => {
+const handleProfileConfirm = async (profile: string): Promise<void> => {
+  currentUser.value = profile
+  step.value = 2
+  connectWebSocket()
+
+  fetch(`${SERVER}/open`, {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({ source: profile }),
+  }).catch((e) => console.error('Impossible de joindre le serveur:', e))
+}
+
+const handleLeave = async () => {
+  await fetch(`${SERVER}/close`, {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({ source: currentUser.value }),
+  })
+  ws?.close()
+  ws = null
   messages.value = []
   currentUser.value = ''
   step.value = 1
 }
 
-const handleSend = ({ target, payload }: { target: string; payload: string }) => {
+const handleSend = async ({ target, payload }: { target: string; payload: string }) => {
   messages.value.push({
     id: nextId.value++,
     source: currentUser.value,
@@ -87,14 +116,10 @@ const handleSend = ({ target, payload }: { target: string; payload: string }) =>
     isSent: true,
   })
 
-  /*
-   * pubsubService.publish('topic_service', {
-   *   CATEGORY: 'EMISSION',
-   *   TARGET: target,
-   *   SOURCE: currentUser.value,
-   *   TIMESTAMP: new Date().toISOString(),
-   *   PAYLOAD: payload,
-   * })
-   */
+  await fetch(`${SERVER}/publish`, {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({ source: currentUser.value, target, payload }),
+  })
 }
 </script>

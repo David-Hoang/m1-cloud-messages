@@ -4,6 +4,7 @@ import { addMessage, TOPIC_SERVICE, type Message, type MessageCategory } from '.
 const topic = pubsub.topic(TOPIC_SERVICE)
 
 export async function publishMessage(
+  source: string,
   target: string,
   payload: string,
   category: MessageCategory = 'EMISSION',
@@ -11,7 +12,7 @@ export async function publishMessage(
   const message: Message = {
     CATEGORY: category,
     TARGET: target,
-    SOURCE: import.meta.env.VITE_USER_NAME,
+    SOURCE: source,
     TIMESTAMP: new Date().toISOString(),
     PAYLOAD: payload,
   }
@@ -23,10 +24,10 @@ export async function publishMessage(
   console.log(`[${category}] → ${target} : ${payload}`)
 }
 
-export async function publishOpen(): Promise<void> {
-  await publishMessage('COMMON', '', 'OPEN')
+export async function publishOpen(source: string): Promise<void> {
+  await publishMessage(source, 'COMMON', '', 'OPEN')
 }
 
-export async function publishClose(): Promise<void> {
-  await publishMessage('COMMON', '', 'CLOSE')
+export async function publishClose(source: string): Promise<void> {
+  await publishMessage(source, 'COMMON', '', 'CLOSE')
 }

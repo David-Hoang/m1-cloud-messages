@@ -3,12 +3,6 @@ import type { Message as PubSubMessage } from '@google-cloud/pubsub'
 import { pubsub } from '../config/pubsub'
 import { addMessage, TOPIC_COMMON, type Message } from '../data/data'
 
-const USER_NAME = import.meta.env.VITE_USER_NAME
-
-const TOPIC_USER = `GOLMON_${USER_NAME}`
-
-const SUB_USER = `GOLMON_sub_${USER_NAME}`
-const SUB_COMMON = `GOLMON_sub_common_${USER_NAME}`
 
 async function ensureSubscription(topicName: string, subName: string): Promise<Subscription> {
   try {
@@ -25,27 +19,36 @@ async function ensureSubscription(topicName: string, subName: string): Promise<S
   }
 }
 
-function handleMessage(message: PubSubMessage): void {
-  try {
-    const parsed: Message = JSON.parse(message.data.toString()) as Message
-    addMessage(parsed)
-    console.log(`[${parsed.CATEGORY}] ${parsed.SOURCE} → ${parsed.TARGET} : ${parsed.PAYLOAD}`)
-  } catch (err) {
-    console.error('Erreur de parsing du message :', err)
-  } finally {
-    message.ack()
+function makeMessageHandler(onMessage?: (msg: Message) => void) {
+  return function handleMessage(message: PubSubMessage): void {
+    try {
+      const parsed: Message = JSON.parse(message.data.toString()) as Message
+      addMessage(parsed)
+      onMessage?.(parsed)
+      console.log(`[${parsed.CATEGORY}] ${parsed.SOURCE} → ${parsed.TARGET} : ${parsed.PAYLOAD}`)
+    } catch (err) {
+      console.error('Erreur de parsing du message :', err)
+    } finally {
+      message.ack()
+    }
   }
 }
 
-export async function startListener(): Promise<void> {
-  const subUser = await ensureSubscription(TOPIC_USER, SUB_USER)
-  const subCommon = await ensureSubscription(TOPIC_COMMON, SUB_COMMON)
+export async function startListener(userName: string, onMessage?: (msg: Message) => void): Promise<void> {
+  const topicUser = `GOLMON_${userName}`
+  const subUser = `GOLMON_sub_${userName}`
+  const subCommon = `GOLMON_sub_common_${userName}`
 
-  subUser.on('message', handleMessage)
-  subCommon.on('message', handleMessage)
+  const handler = makeMessageHandler(onMessage)
 
-  subUser.on('error', (err) => console.error(`Erreur sur ${SUB_USER} :`, err))
-  subCommon.on('error', (err) => console.error(`Erreur sur ${SUB_COMMON} :`, err))
+  const subUserConn = await ensureSubscription(topicUser, subUser)
+  const subCommonConn = await ensureSubscription(TOPIC_COMMON, subCommon)
 
-  console.log(`Listener démarré sur ${TOPIC_USER} et ${TOPIC_COMMON}`)
+  subUserConn.on('message', handler)
+  subCommonConn.on('message', handler)
+
+  subUserConn.on('error', (err) => console.error(`Erreur sur ${subUser} :`, err))
+  subCommonConn.on('error', (err) => console.error(`Erreur sur ${subCommon} :`, err))
+
+  console.log(`Listener démarré sur ${topicUser} et ${TOPIC_COMMON}`)
 }

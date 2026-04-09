@@ -22,23 +22,17 @@
 </template>
 
 <script setup lang="ts">
-import { publishOpen } from '../services/publish.service'
-
-const currentUser =  () => {
-  const rawUserName = import.meta.env.VITE_USER_NAME;
-  if (rawUserName) {
-    return rawUserName.split('_')[1]
-  } else {
-    return 'Inconnu';
-  }
+const getUserName = () => {
+  return import.meta.env.VITE_USER_NAME ?? 'Inconnu'
 }
 
+const currentUser = getUserName
+
 const emit = defineEmits<{
-  (e: 'login'): void
+  (e: 'login', userName: string): void
 }>()
 
 const handleLogin = () => {
-  emit('login')
-  publishOpen()
+  emit('login', getUserName())
 }
 </script>
