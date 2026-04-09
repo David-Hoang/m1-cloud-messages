@@ -1,6 +1,6 @@
 <template>
   <div>
-    <ProfilePicker v-if="step === 1" @confirm="handleProfileConfirm" />
+    <LoginPage v-if="step === 1" @login="handleProfileConfirm" />
 
     <div v-if="step === 2" class="min-h-screen bg-stone-100 flex items-center justify-center p-6">
       <div class="w-full max-w-2xl h-[85vh] max-h-200 flex flex-col bg-white rounded-2xl border border-gray-200 shadow-sm overflow-hidden">
@@ -41,7 +41,7 @@
 
 <script setup lang="ts">
 import { ref, computed } from 'vue'
-import ProfilePicker from './components/ProfilePicker.vue'
+import LoginPage from './components/LoginPage.vue'
 import MessageList from './components/Messages/MessagesList.vue'
 import MessageInput from './components/Messages/MessagesInput.vue'
 import type { Message } from './types/MessageType'
@@ -56,15 +56,13 @@ const messages = ref<Message[]>([])
 
 const otherUsers = computed(() => ALL_USERS.filter(u => u !== currentUser.value))
 
-const handleProfileConfirm = (profile: string) => {
-  currentUser.value = profile
-
+const handleProfileConfirm = (): void => {
   messages.value.push({
     id: nextId.value++,
-    source: profile,
+    source: currentUser.value,
     target: 'COMMON',
     category: 'OPEN',
-    payload: `${profile} vient de rejoindre le chat.`,
+    payload: `${currentUser.value} vient de rejoindre le chat.`,
     timestamp: new Date().toISOString(),
     isSent: false,
   })
